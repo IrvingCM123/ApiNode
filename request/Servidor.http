@@ -1,0 +1,33 @@
+@api = http://localhost:2000/Servidor
+
+###
+get {{api}}
+
+###
+get {{api}}/ObtenerDocente
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOdW1lcm9QZXJzb25hbCI6IjEyMzQ1IiwiaWF0IjoxNjg1NDE5NzcxfQ.a9h1rpyyqVh14fhkfPNkQcUp29DlO3kLhAaP61lmb7c
+###
+POST {{api}}/RegistrarUsuarios
+Content-Type: application/json
+
+[
+    12345, "IrvingConde123", "Mancilla@Unam.mx", "https://firebasestorage.googleapis.com/v0/b/listasasistencia-f6f1d.appspot.com/o/images%2F5a21739b9c3619.8843644015121417236399.png?alt=media&token=06283fd9-3e1a-4d9a-baec-f4cee78dba8a"
+]
+
+###
+POST {{api}}/IniciarSesion
+Content-Type: application/json
+
+{
+  "Correo": "CentenoCentenito@hotmail.com",
+  "Contraseña": "IrvingConde123"
+}
+
+###
+DELETE  {{api}}/EliminarUsuarioTodo
+
+###
+GET {{api}}/VerMateriaDocente
+
+###
+GET {{api}}/EncontrarMateriaDocente/NRC/NumeroPersonal
