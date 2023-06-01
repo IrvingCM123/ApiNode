@@ -10,3 +10,4 @@ export const querys = {
   ConsultarMateriaHora: "SELECT m.nombre FROM salones s JOIN materias m ON s.nrc = m.nrc WHERE s.salon = $1 AND s.edificio = $2 AND m.horario_lunes = $3; ",
 };
     
+
