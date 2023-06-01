@@ -28,6 +28,8 @@ DELETE  {{api}}/EliminarUsuarioTodo
 
 ###
 GET {{api}}/VerMateriaDocente
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOdW1lcm9QZXJzb25hbCI6MTU3NjkxMjg1MSwiaWF0IjoxNjg1NTkyMzc4fQ.FC9bm3EJJdaVXlgXTOYaNKFlMhduScNbiX_wTL05Sa0
+
 
 ###
 GET {{api}}/EncontrarMateriaDocente/NRC/NumeroPersonal
