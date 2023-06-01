@@ -26,8 +26,6 @@ router.post("/Servidor/IniciarSesion", generarToken);
 
 router.get("/Servidor/VerMateriaDocente", DocentesMateria);
 
-router.get("/Servidor/EncontrarMateriaDocente/:NRC/:NumeroPersonal", encontrarMateriaDocente);
-
 router.get("/Servidor/ObtenerDocente", ObtenerInfoDocente);
 
 export default router;

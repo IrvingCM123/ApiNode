@@ -107,14 +107,16 @@ export const ObtenerInfoDocente = async (req, res) => {
     const token = req.headers.authorization;
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const { NumeroPersonal } = decodedToken;
-    console.log(NumeroPersonal)
+
     const client = await pool.connect();
     const result = await client.query(querys.ObtenerInfoDocentes, [
       NumeroPersonal,
     ]);
-    const { nombre, numero_personal, facultad_asignada, url_imagen } =
+
+    const { nombres, apellidos, numero_personal, facultad, url_imagen } =
       result.rows[0];
-    res.json({ nombre, numero_personal, facultad_asignada, url_imagen });
+
+    res.json({ nombres,apellidos, numero_personal, facultad, url_imagen });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
