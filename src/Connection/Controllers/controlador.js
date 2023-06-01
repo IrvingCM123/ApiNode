@@ -120,15 +120,22 @@ export const ObtenerInfoDocente = async (req, res) => {
   }
 };
 
-export const verMateriaDocente = async (req, res) => {
+export const DocentesMateria = async (req, res) => {
   try {
-    const query = new QueryStream(querys.VerMateriaDocente);
-    const stream = pool.query(query);
-    stream.pipe(res);
+    const token = req.headers.authorization;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const { NumeroPersonal } = decodedToken;
+
+    const client = await pool.connect();
+    const result = await client.query(querys.VerMateriaDocente, [NumeroPersonal]);
+    const nrcs = result.rows.map((row) => row.nrc);
+
+    res.json({ nrcs });
   } catch (error) {
-    res.status(500).send("Error retrieving materia docente: " + error.message);
+    res.status(500).json({ error: error.message });
   }
 };
+
 
 export const encontrarMateriaDocente = async (req, res) => {
   const { NRC, NumeroPersonal } = req.params;
