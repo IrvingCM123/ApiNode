@@ -4,7 +4,7 @@ import {
   enviarCorreo,
   EliminarUsuarioTodo,
   generarToken,
-  verMateriaDocente,
+  DocentesMateria,
   encontrarMateriaDocente,
   obtenerRegistros,
   ObtenerInfoDocente
@@ -24,9 +24,7 @@ router.delete("/Servidor/EliminarUsuarioTodo", EliminarUsuarioTodo);
 
 router.post("/Servidor/IniciarSesion", generarToken);
 
-router.get("/Servidor/VerMateriaDocente", verMateriaDocente);
-
-router.get("/Servidor/EncontrarMateriaDocente/:NRC/:NumeroPersonal", encontrarMateriaDocente);
+router.get("/Servidor/VerMateriaDocente", DocentesMateria);
 
 router.get("/Servidor/ObtenerDocente", ObtenerInfoDocente);
 
