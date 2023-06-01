@@ -69,6 +69,7 @@ export const EliminarUsuarioTodo = async (req, res) => {
 };
 
 export const AltaCuentaDocente = async (req, res) => {
+
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -76,15 +77,25 @@ export const AltaCuentaDocente = async (req, res) => {
     }
 
     const [Numero_Personal, Contraseña, Correo, URL_Imagen] = req.body;
-    
     const client = await pool.connect();
-    await client.query(querys.InsertarCuentaDocente, [
-      Numero_Personal,
-      Contraseña,
-      Correo,
-      URL_Imagen,
-    ]);
-    res.json({ Numero_Personal, Contraseña, Correo, URL_Imagen});
+  
+    const existencia = await client.query(querys.DocenteExistencia, [Numero_Personal]);
+    const contar = await client.query(querys.CuentaExistente, [Correo]);
+    if(existencia.rows[0].count = 1) {
+      if (contar.rows[0].count == 0) {
+        await client.query(querys.InsertarCuentaDocente, [
+          Numero_Personal,
+          Contraseña,
+          Correo,
+          URL_Imagen,
+        ]);
+        res.json({ Numero_Personal, Contraseña, Correo, URL_Imagen });
+      } else {
+        return res.status(400).json("La cuenta ya existe!!!");
+      }
+    } else {
+      return res.status(400).json("El numero de personal no esta registrado en el sistema")
+    }
   } catch (error) {
     res.status(500);
     res.send(error.message);
@@ -96,7 +107,7 @@ export const ObtenerInfoDocente = async (req, res) => {
     const token = req.headers.authorization;
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const { NumeroPersonal } = decodedToken;
-
+    console.log(NumeroPersonal)
     const client = await pool.connect();
     const result = await client.query(querys.ObtenerInfoDocentes, [
       NumeroPersonal,
