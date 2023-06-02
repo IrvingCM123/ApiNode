@@ -8,6 +8,9 @@ const pool = new Pool({
   host: 'localhost',
   port: 5432,
   database: 'docentes',
+  connectionConfig: {
+    charset: 'UTF8'
+  },
 });
 
 export { pool };
