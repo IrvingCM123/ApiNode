@@ -24,15 +24,7 @@ jobs:
           envkey_NG_APP_KEY : ${{ secrets.OPENAI_KEY }}
           file_name: .env
           fail_on_empty: false
-          
-      - name: build react, output in build
-        run: |
-          npm run build
-      
-      - name: show dir, .env file
-        run: |
-          ls -la build
-          
+                    
       - name: download, run httpd image, container name serving_base
         run: |
           docker run -d --name serving_base httpd
