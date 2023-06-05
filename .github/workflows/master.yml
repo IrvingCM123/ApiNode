@@ -1,80 +1,34 @@
-name: master workflow 
-on: 
+name: Deploy to Okteto
+
+on:
   push:
-    branches: [ "master"]
-  pull_request:
-    branches: [ "master"]
+    branches:
+      - master
+
 jobs:
-  master_ci_cd:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - name: npm install
-        run: npm install
-#      - name: Test
-#        run: |
-#          npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-      - name: make .env 
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_NG_APP_KEY : ${{ secrets.OPENAI_KEY }}
-          file_name: .env
-          fail_on_empty: false
-                    
-      - name: download, run httpd image, container name serving_base
-        run: |
-          docker run -d --name serving_base httpd
-          
-      - name: cp react build to container
-        run: |
-          docker cp build/.  serving_base:/usr/local/apache2/htdocs
-          
-      - name: Build the custom Docker image
-        run: docker commit --change "ENV MODEL_NAME ${{secrets.MODEL_NAME}}" serving_base ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME}}:${{github.sha}}
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: show docker images
-        run: docker images
+      - name: Install Okteto CLI
+        run: curl https://get.okteto.com -sSfL | sh
 
-      - name: docker login
+      - name: Login to Okteto
         env:
-          DOCKER_USER: ${{secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-          
-      - name: Docker Push
-        run: docker push ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME}}:${{github.sha}}
-      
-      - name: update docker user in k8 
-        run: sed -i 's/{docker_user}/${{secrets.DOCKER_USER}}/g' manifests/k8s.yaml
+          OKTETO_TOKEN: ${{ secrets.OKTETO_TOKEN }}
+        run: okteto login --token $OKTETO_TOKEN
 
-      - name: update model name in k8 
-        run: sed -i 's/{model_name}/${{secrets.MODEL_NAME}}/g' manifests/k8s.yaml
-        
-      - name: update model nodo in k8 
-        run: sed -i 's/{nodo}/${{secrets.NODO}}/g' manifests/k8s.yaml
-
-      - name: update _ by - 
-        run: sed -i 's/_/-/g' manifests/k8s.yaml
-
-      - name: update sha in k8
-        run: sed -i 's/{github.sha}/${{github.sha}}/g' manifests/k8s.yaml
-
-      - name: ls -la 
-        run: cat manifests/k8s.yaml
-      - uses: okteto/context@2.7.0
-        with:
-          token: ${{secrets.OKTETO_TOKEN }}
-
-      - name: Deploy and Wait
-        uses: okteto/actions/deploy@v1
+      - name: Deploy to Okteto
         env:
-          KUBECONFIG: ${{ steps.namespace.outputs.kubeconfig }}
-        with:
-          namespace: ${{secrets.OKTETO_NAMESPACE }}
-          manifest: manifests/k8s.yaml
-          tag: ${{ secrets.DOCKER_USERNAME }}/${{secrets.MODEL_NAME}}:${{github.sha}}
+          MODEL_NAME: api
+          NODO: 1
+          DOCKER_USER: irvingrcm123
+        run: |
+          sed -i 's/{model_name}/'"${MODEL_NAME}"'/g' manifests/k8s.yaml
+          sed -i 's/{nodo}/'"${NODO}"'/g' manifests/k8s.yaml
+          sed -i 's/{docker_user}/'"${DOCKER_USER}"'/g' manifests/k8s.yaml
+          sed -i 's/{github.sha}/'"${{ github.sha }}"'/g' manifests/k8s.yaml
+          okteto up -f manifests/k8s.yaml
