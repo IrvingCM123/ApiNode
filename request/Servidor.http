@@ -33,3 +33,11 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOdW1lcm9QZXJzb25hbCI6MTU3
 
 ###
 GET {{api}}/EncontrarMateriaDocente/NRC/NumeroPersonal
+
+###
+POST {{api}}/GenerarToken
+Content-Type: application/json
+
+[
+  "21321", "1313", "4324"
+]
