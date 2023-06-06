@@ -69,7 +69,6 @@ export const EliminarUsuarioTodo = async (req, res) => {
 };
 
 export const AltaCuentaDocente = async (req, res) => {
-
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -77,11 +76,16 @@ export const AltaCuentaDocente = async (req, res) => {
     }
 
     const [Numero_Personal, Contraseña, Correo, URL_Imagen] = req.body;
-    const client = await pool.connect();
-  
-    const existencia = await client.query(querys.DocenteExistencia, [Numero_Personal]);
+
+    const client = await pool.connect({
+      charset: "utf8mb4",
+    });
+
+    const existencia = await client.query(querys.DocenteExistencia, [
+      Numero_Personal,
+    ]);
     const contar = await client.query(querys.CuentaExistente, [Correo]);
-    if(existencia.rows[0].count = 1) {
+    if ((existencia.rows[0].count = 1)) {
       if (contar.rows[0].count == 0) {
         await client.query(querys.InsertarCuentaDocente, [
           Numero_Personal,
@@ -94,7 +98,9 @@ export const AltaCuentaDocente = async (req, res) => {
         return res.status(400).json("La cuenta ya existe!!!");
       }
     } else {
-      return res.status(400).json("El numero de personal no esta registrado en el sistema")
+      return res
+        .status(400)
+        .json("El numero de personal no esta registrado en el sistema");
     }
   } catch (error) {
     res.status(500);
@@ -116,7 +122,7 @@ export const ObtenerInfoDocente = async (req, res) => {
     const { nombres, apellidos, numero_personal, facultad, url_imagen } =
       result.rows[0];
 
-    res.json({ nombres,apellidos, numero_personal, facultad, url_imagen });
+    res.json({ nombres, apellidos, numero_personal, facultad, url_imagen });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -129,7 +135,9 @@ export const DocentesMateria = async (req, res) => {
     const { NumeroPersonal } = decodedToken;
 
     const client = await pool.connect();
-    const result = await client.query(querys.VerMateriaDocente, [NumeroPersonal]);
+    const result = await client.query(querys.VerMateriaDocente, [
+      NumeroPersonal,
+    ]);
     const nrcs = result.rows.map((row) => row.nrc);
 
     res.json({ nrcs });
@@ -138,15 +146,23 @@ export const DocentesMateria = async (req, res) => {
   }
 };
 
-
 export const encontrarMateriaDocente = async (req, res) => {
-  const { NRC, NumeroPersonal } = req.params;
+  const token = req.headers.authorization;
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const { Valor } = decodedToken;
+  let NRCs = Valor;
+  if (!Array.isArray(NRCs)) {
+    NRCs = [NRCs];
+  }
+
   try {
-    const result = await pool.query(querys.EncontrarMateriaDocente, [
-      NRC,
-      NumeroPersonal,
-    ]);
-    res.send(result.rows[0]);
+    const result = await Promise.all(
+      NRCs.map((NRC) => pool.query(querys.EncontrarMateriaDocente, [NRC]))
+    );
+
+    const responseData = result.map((res) => res.rows[0]);
+
+    res.send(responseData);
   } catch (error) {
     res.status(500);
     res.send(error.message);
@@ -154,6 +170,16 @@ export const encontrarMateriaDocente = async (req, res) => {
 };
 
 export const generarToken = async (req, res) => {
+  try {
+    const valor = req.body;
+    const token = jwt.sign({ Valor: valor }, process.env.JWT_SECRET);
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const IniciarSesion = async (req, res) => {
   try {
     const { Correo, Contraseña } = req.body;
 
