@@ -77,9 +77,7 @@ export const AltaCuentaDocente = async (req, res) => {
 
     const [Numero_Personal, Contraseña, Correo, URL_Imagen] = req.body;
 
-    const client = await pool.connect({
-      charset: "utf8mb4",
-    });
+    const client = await pool.connect();
 
     const existencia = await client.query(querys.DocenteExistencia, [
       Numero_Personal,
@@ -181,7 +179,10 @@ export const generarToken = async (req, res) => {
 
 export const IniciarSesion = async (req, res) => {
   try {
-    const { Correo, Contraseña } = req.body;
+    const recibir = req.body;
+    console.log(req.body)
+    let Correo = recibir[0];
+    let Contraseña = recibir[1]
 
     const result = await pool.query(querys.verificarCuenta, [
       Correo,

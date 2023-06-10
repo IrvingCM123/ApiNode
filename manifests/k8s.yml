@@ -19,6 +19,13 @@ spec:
         image: docker.io/{docker_user}/{model_name}:{github.sha}
         ports:
         - containerPort: 3000
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: metadata
+              key: JWT_SECRET
+
 ---
 apiVersion: v1
 kind: Service
