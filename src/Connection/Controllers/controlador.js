@@ -144,6 +144,20 @@ export const DocentesMateria = async (req, res) => {
   }
 };
 
+export const Traer = async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM docentes');
+    client.release();
+
+    const docentes = result.rows;
+    res.status(200).json(docentes);
+  } catch (error) {
+    console.error('Error al obtener los docentes:', error);
+    res.status(500).json({ error: 'Error al obtener los docentes' });
+  }
+};
+
 export const encontrarMateriaDocente = async (req, res) => {
   const token = req.headers.authorization;
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -179,10 +193,10 @@ export const generarToken = async (req, res) => {
 
 export const IniciarSesion = async (req, res) => {
   try {
-    const recibir = req.body;
+    const {Correo, Contraseña} = req.body;
+
+    console.log(Correo, Contraseña)
     console.log(req.body)
-    let Correo = recibir[0];
-    let Contraseña = recibir[1]
 
     const result = await pool.query(querys.verificarCuenta, [
       Correo,

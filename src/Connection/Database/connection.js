@@ -4,10 +4,10 @@ const { Pool } = pkg;
 // Configuración de la base de datos
 const pool = new Pool({
   user: 'postgres',
-  password: 'IrvingConde123',
-  host: 'localhost',
+  password: 'postgres',
+  host: '34.27.246.241',
   port: 5432,
-  database: 'docentes',
+  database: 'postgres',
   connectionConfig: {
     charset: 'UTF8'
   },

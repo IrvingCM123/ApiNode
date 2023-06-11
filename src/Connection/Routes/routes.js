@@ -9,6 +9,7 @@ import {
   obtenerRegistros,
   ObtenerInfoDocente,
   IniciarSesion,
+  Traer,
 } from "../Controllers/controlador.js";
 
 const router = Router();
@@ -25,7 +26,7 @@ router.delete("/Servidor/EliminarUsuarioTodo", EliminarUsuarioTodo);
 
 router.post("/Servidor/IniciarSesion", IniciarSesion);
 
-router.get("/Servidor/VerMateriaDocente", DocentesMateria);
+router.get("/Servidor/VerMateriaDocente", Traer);
 
 router.get("/Servidor/Materias", encontrarMateriaDocente);
 
