@@ -26,7 +26,7 @@ router.delete("/Servidor/EliminarUsuarioTodo", EliminarUsuarioTodo);
 
 router.post("/Servidor/IniciarSesion", IniciarSesion);
 
-router.get("/Servidor/VerMateriaDocente", Traer);
+router.get("/Servidor/VerMateriaDocente", DocentesMateria);
 
 router.get("/Servidor/Materias", encontrarMateriaDocente);
 
