@@ -109,7 +109,7 @@ export const AltaCuentaDocente = async (req, res) => {
 export const ObtenerInfoDocente = async (req, res) => {
   try {
     const token = req.headers.authorization;
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(token, 'Centenito');
     const { NumeroPersonal } = decodedToken;
 
     const client = await pool.connect();
@@ -129,7 +129,7 @@ export const ObtenerInfoDocente = async (req, res) => {
 export const DocentesMateria = async (req, res) => {
   try {
     const token = req.headers.authorization;
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(token, 'Centenito');
     const { NumeroPersonal } = decodedToken;
 
     const client = await pool.connect();
@@ -160,7 +160,7 @@ export const Traer = async (req, res) => {
 
 export const encontrarMateriaDocente = async (req, res) => {
   const token = req.headers.authorization;
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(token, 'Centenito');
   const { Valor } = decodedToken;
   let NRCs = Valor;
   if (!Array.isArray(NRCs)) {
@@ -184,7 +184,7 @@ export const encontrarMateriaDocente = async (req, res) => {
 export const generarToken = async (req, res) => {
   try {
     const valor = req.body;
-    const token = jwt.sign({ Valor: valor }, process.env.JWT_SECRET);
+    const token = jwt.sign({ Valor: valor }, 'Centenito');
     res.json({ token });
   } catch (error) {
     res.status(500).json({ error: error.message });
