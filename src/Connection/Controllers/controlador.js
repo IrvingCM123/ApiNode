@@ -206,9 +206,7 @@ export const IniciarSesion = async (req, res) => {
     if (result.rows.length === 1) {
       const { numero_personal } = result.rows[0];
       const token = jwt.sign(
-        { NumeroPersonal: numero_personal },
-        process.env.JWT_SECRET
-      );
+        { NumeroPersonal: numero_personal }, 'Centenito');
 
       res.json({ token });
     } else {
