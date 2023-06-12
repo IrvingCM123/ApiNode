@@ -23,19 +23,19 @@ export const obtenerRegistros = async (req, res) => {
 export const enviarCorreo = async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: process.env.Gmail_Service,
+      service: 'gmail',
       auth: {
-        user: process.env.Gmail_User,
-        pass: process.env.Gmail_Password,
+        user: 'Irving.CondeM@Gmail.com',
+        pass: 'bswntwhqwrxnfvba',
       },
     });
 
     const { numero, nrc } = req.body;
 
     const message = {
-      from: process.env.Gmail_User,
-      to: process.env.Gmail_Destiny,
-      subject: process.env.Gmail_Subject_Alta_Materia,
+      from: 'Irving.CondeM@Gmail.com',
+      to: 'Irving.Conde117@Gmail.com',
+      subject: 'Se solicita un alta de materia',
       text: `
         Docente: ${numero}
         Materia: ${nrc}
